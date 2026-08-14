@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+*.log
+.env
+.env.local
+diagnosis_*.json
+trace_*.json
