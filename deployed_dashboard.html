@@ -424,12 +424,13 @@ tbody tr:hover{background:rgba(88,166,255,.05);}
     <span style="margin-left:auto;display:flex;gap:7px;align-items:center;">
       <span style="font-size:11px;color:var(--muted);">갱신 주기</span>
       <select id="wl-interval" style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--panel3);color:var(--text);font-size:12px;">
+        <option value="3">3초</option>
+        <option value="5" selected>5초</option>
+        <option value="10">10초</option>
         <option value="15">15초</option>
-        <option value="30" selected>30초</option>
-        <option value="60">1분</option>
-        <option value="120">2분</option>
+        <option value="30">30초</option>
       </select>
-      <button class="btn btn-primary" id="wl-toggle">▶ 시작</button>
+      <button class="btn btn-primary" id="wl-toggle">⏹ 정지</button>
       <button class="btn btn-danger"  id="wl-clear">전체 삭제</button>
     </span>
   </div>
@@ -1916,6 +1917,9 @@ resetGroupForm();
 ensureWatchlistGroups();
 loadExistingWatchlist();
 refreshAllWatchlistGroups();
+
+// 페이지 진입 시 자동으로 실시간 감시 시작
+if(!S.wl.running) startWl();
 
 // ══════════════════════════════════════════════
 //  계좌 & 운영현황 탭
