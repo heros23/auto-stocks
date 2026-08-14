@@ -146,26 +146,31 @@ def make_signal_snapshot(market, period=20, pct=5, entry=None):
     minute_bucket = int(time.time() // 60)
     day_bucket = int(time.time() // 86400)
 
+    # 현재가: ref_price 기준으로 -3% ~ +3% 변동 (좀 더 현실적인 움직임)
     close_move = stable_ratio(
         market, entry["ticker"], minute_bucket, "close",
-        lo=-1.6 if market == "NASDAQ" else -2.2,
-        hi=1.6 if market == "NASDAQ" else 2.2,
+        lo=-3.0 if market == "NASDAQ" else -3.5,
+        hi=3.0 if market == "NASDAQ" else 3.5,
     )
     close = round_price_for_market(market, anchor * (1 + close_move / 100))
 
-    ma_bias = stable_ratio(market, entry["ticker"], period, minute_bucket, "ma", lo=-1.2, hi=1.2)
+    # MA: 현재가 기준으로 -2% ~ +2% 편차 (현재가와 일관성 유지)
+    ma_bias = stable_ratio(market, entry["ticker"], period, minute_bucket, "ma", lo=-2.0, hi=2.0)
     ma = round_price_for_market(market, close * (1 + ma_bias / 100))
     lower = round_price_for_market(market, ma * (1 - float(pct) / 100))
     upper = round_price_for_market(market, ma * (1 + float(pct) / 100))
 
-    change_1d = round(stable_ratio(market, entry["ticker"], day_bucket, "change_1d", lo=-2.8, hi=2.8), 2)
+    # 등락률: 현재가 변동률과 동일하게 (close_move 기반)
+    change_1d = round(close_move, 2)
     pct_from_ma = round((close - ma) / ma * 100, 2) if ma else 0
     pct_from_lower = round((close - lower) / lower * 100, 2) if lower else 0
     pct_from_upper = round((close - upper) / upper * 100, 2) if upper else 0
 
+    # 52주 고가: 현재가보다 항상 높게 설정 (10%~40% 위)
+    high_52w_offset = stable_ratio(market, entry["ticker"], "52w", lo=10.0, hi=40.0)
     high_52w = round_price_for_market(
         market,
-        max(close, anchor * (1 + stable_ratio(market, entry["ticker"], "52w", lo=6.0, hi=28.0) / 100)),
+        close * (1 + high_52w_offset / 100),
     )
     from_52w_high = round((close - high_52w) / high_52w * 100, 2) if high_52w else 0
     signal = classify_signal(close, ma, lower, upper)
