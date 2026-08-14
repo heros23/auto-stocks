@@ -1,0 +1,46 @@
+{
+  "frontend": {
+    "watchlist_poll_seconds": 30,
+    "group_refresh_strategy": "manual_or_tab_entry",
+    "group_refresh_min_seconds": 60,
+    "search_click_debounce_ms": 1200,
+    "chart_cache_seconds": 300,
+    "account_poll_seconds_when_visible": 5
+  },
+  "backend": {
+    "http_cache_ttl_seconds": {
+      "scan": 15,
+      "group_scan": 30,
+      "chart": 300,
+      "account": 5,
+      "llm_strategy": 900
+    },
+    "request_dedup_window_ms": 1500,
+    "max_parallel_group_scans": 2,
+    "compress_response_fields": true,
+    "drop_unused_fields": [
+      "volume_0d",
+      "volume_1d",
+      "week52_high",
+      "week52_low",
+      "currency"
+    ]
+  },
+  "llm": {
+    "primary_model": "gpt-4.1-mini",
+    "fallback_model": "gpt-4.1-nano",
+    "temperature": 0.2,
+    "max_input_chars": 4000,
+    "max_output_tokens": 600,
+    "summary_output_tokens": 180,
+    "top_n_symbols_for_reasoning": 12,
+    "reuse_daily_market_summary": true,
+    "cache_key_dimensions": [
+      "market",
+      "preset",
+      "period",
+      "pct",
+      "session_date"
+    ]
+  }
+}
